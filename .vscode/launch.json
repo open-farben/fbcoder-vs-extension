@@ -9,8 +9,11 @@
 			"name": "调试扩展",
 			"type": "extensionHost",
 			"request": "launch",
+			"env": { "NODE_ENV":"development" },
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"${workspaceFolder}/playground.js",
+				// "--disable-extensions"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"

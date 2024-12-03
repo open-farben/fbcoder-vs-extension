@@ -1,1 +1,55 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// 定义出默认主题
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// 定义暗色的主题
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$azure-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// 在你的应用中包含核心和每个组件的主题样式。
+// 或者，你也可以为你正在使用的每个组件导入和@include主题混合。
+:root {
+  .vscode-dark {
+    @include mat.all-component-themes($dark-theme);
+  }
+  .vscode-light {
+      @include mat.all-component-themes($light-theme);
+  }
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($webview-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($webview-theme);
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; padding: 0; }
+@import url('highlight.js/styles/qtcreator-dark.min.css');

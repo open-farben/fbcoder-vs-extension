@@ -1,0 +1,19 @@
+{
+  "Bye": "Bye",
+  "Bye {0}/{0} is a person's name": {
+    "message": "Bye {0}",
+    "comment": [
+      "{0} is a person's name"
+    ]
+  },
+  "Hello": "哈喽",
+  "Hello {done}": "哈喽 {done}",
+  "Login": "Login",
+  "Please login to use GPTCoder": "Please login to use GPTCoder",
+  "You have successfully signed out {0} from fbcoder./这里的{0}代表用户名": {
+    "message": "You have successfully signed out {0} from fbcoder.",
+    "comment": [
+      "这里的{0}代表用户名"
+    ]
+  }
+}

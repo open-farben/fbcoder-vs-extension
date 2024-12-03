@@ -1,44 +1,197 @@
 {
-  "name": "fbcode",
-  "displayName": "fbcode",
-  "description": "fbcode",
-  "version": "0.0.1",
+  "publisher": "Farben",
+  "name": "fbcoder",
+  "displayName": "fbcoder",
+  "description": "fbcoder",
+  "version": "1.8.13",
   "engines": {
     "vscode": "^1.94.0"
   },
+  "l10n": "./l10n",
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "fbcode.helloWorld",
-        "title": "Hello World"
+        "command": "extension.sayBye",
+        "title": "%extension.sayBye.title%"
+      },
+      {
+        "command": "fbcoder.welcome-page",
+        "title": "%fbcoder.welcome-page%"
+      },
+      {
+        "command": "fbcoder.clear-dialog",
+        "title": "%fbcoder.clearDialog%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "fbcoder.open-setting",
+        "title": "%fbcoder.open-setting%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "fbcoder.login-out",
+        "title": "%fbcoder.login-out%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "fbcoder.change-passworld",
+        "title": "%fbcoder.change-passworld%",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "fbcoder.code-repeir",
+        "title": "%fbcoder.code-repeir%",
+        "description": "通过选择模板生成带有提示的代码"
+      },
+      {
+        "command": "fbcoder.code-explain",
+        "title": "%fbcoder.code-explain%",
+        "description": "通过选择模板生成带有提示的代码"
+      },
+      {
+        "command": "fbcoder.generate-comment",
+        "title": "%fbcoder.generate-comment%",
+        "description": "通过选择模板生成带有提示的代码"
+      },
+      {
+        "command": "fbcoder.code-test",
+        "title": "%fbcoder.code-test%"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "fbcoder.new-completions",
+        "key": "Alt+\\",
+        "when": "editorFocus && !editorReadonly"
+      },
+      {
+        "command": "fbcoder.next-completions",
+        "key": "Alt+right",
+        "when": "editorFocus && !editorReadonly"
+      },
+      {
+        "command": "fbcoder.previous-completions",
+        "key": "Alt+left",
+        "when": "editorFocus && !editorReadonly"
+      },
+      {
+        "command": "fbcoder.all-completions",
+        "key": "Alt+/",
+        "when": "editorFocus && !editorReadonly"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-            "id": "gptcoder-sidebar",
-            "title": "GPTcoder",
-            "icon": "farAI-logo.svg"
+          "id": "fbcoder-sidebar",
+          "title": "聊天对话",
+          "icon": "$(comment-unresolved)"
         }
       ]
     },
     "views": {
-      "gptcoder-sidebar": [
+      "fbcoder-sidebar": [
         {
-            "type": "webview",
-            "id": "gptcoder-translate",
-            "name": ""
+          "type": "webview",
+          "id": "fbcoder-chat",
+          "name": ""
         }
       ]
-    }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "fbcoder.clear-dialog",
+          "when": "view == fbcoder-chat",
+          "group": "navigation"
+        },
+        {
+          "command": "fbcoder.clear-dialog",
+          "when": "view == fbcoder-chat"
+        },
+        {
+          "command": "extension.sayBye",
+          "when": "view == fbcoder-chat"
+        },
+        {
+          "command": "fbcoder.welcome-page",
+          "when": "view == fbcoder-chat"
+        },
+        {
+          "command": "fbcoder.open-setting",
+          "when": "view == fbcoder-chat"
+        },
+        {
+          "command": "fbcoder.login-out",
+          "when": "view == fbcoder-chat && fbcode.needLogin"
+        },
+        {
+          "command": "fbcoder.change-passworld",
+          "when": "view == fbcoder-chat && fbcode.needLogin"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "fbcoder.tool",
+          "group": "navigation"
+        }
+      ],
+      "fbcoder.tool": [
+        {
+          "command": "fbcoder.generate-comment",
+          "when": "editorFocus && !editorReadonly"
+        },
+        {
+          "command": "fbcoder.code-explain",
+          "when": "editorFocus && !editorReadonly"
+        },
+        {
+          "command": "fbcoder.code-repeir",
+          "when": "editorFocus && !editorReadonly"
+        },
+        {
+          "command": "fbcoder.code-test",
+          "when": "editorFocus && !editorReadonly"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "fbcoder.tool",
+        "label": "FbCoder"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "fbcoder",
+        "properties": {
+          "fbcoder.serveUrl": {
+            "type": "string",
+            "default": "",
+            "description": "数据后台的服务器地址。"
+          },
+          "fbcoder.OnlyKeyControl": {
+            "type": "boolean",
+            "default": null,
+            "description": "如果您仅想在需要的时候按键 alt/option+\\ 获取提示，请配置此选项。"
+          }
+        }
+      }
+    ]
   },
+  "enabledApiProposals": [
+    "inlineCompletionsAdditions"
+  ],
   "scripts": {
     "vscode:prepublish": "pnpm run package",
+    "l10n": "npx @vscode/l10n-dev export -o ./l10n ./src",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
@@ -50,19 +203,28 @@
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "download-api": "npx @vscode/dts dev",
+    "postinstall": "npm run download-api"
   },
   "devDependencies": {
-    "@types/vscode": "^1.94.0",
     "@types/mocha": "^10.0.8",
     "@types/node": "20.x",
+    "@types/vscode": "^1.94.0",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
-    "eslint": "^9.11.1",
-    "esbuild": "^0.24.0",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.6.2",
+    "@vscode/dts": "^0.4.1",
+    "@vscode/l10n-dev": "^0.0.35",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.11.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "@vscode/l10n": "^0.0.18",
+    "axios": "^1.7.7",
+    "uuid": "^11.0.3"
   }
 }

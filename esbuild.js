@@ -16,7 +16,7 @@ const esbuildProblemMatcherPlugin = {
 		build.onEnd((result) => {
 			result.errors.forEach(({ text, location }) => {
 				console.error(`✘ [ERROR] ${text}`);
-				console.error(`    ${location.file}:${location.line}:${location.column}:`);
+				console.error(`    ${location?.file}:${location?.line}:${location?.column}:`);
 			});
 			console.log('[watch] build finished');
 		});
@@ -26,7 +26,8 @@ const esbuildProblemMatcherPlugin = {
 async function main() {
 	const ctx = await esbuild.context({
 		entryPoints: [
-			'src/extension.ts'
+			'src/extension.ts',
+			'src/cli.ts'
 		],
 		bundle: true,
 		format: 'cjs',
@@ -34,7 +35,7 @@ async function main() {
 		sourcemap: !production,
 		sourcesContent: false,
 		platform: 'node',
-		outfile: 'out/extension.js',
+		outdir: 'out/',
 		external: ['vscode'],
 		logLevel: 'silent',
 		plugins: [

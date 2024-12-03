@@ -1,0 +1,12 @@
+:host {
+    min-height: 42px;
+    max-height: 160px;
+    margin: 5px 8px 0;
+    position: relative;
+}
+.close-button {
+    color: tomato;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+}

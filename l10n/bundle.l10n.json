@@ -1,0 +1,13 @@
+{
+  "Hello": "Hello",
+  "Hello {name}": "Hello {name}",
+  "Bye {0}/user name": {
+    "message": "Bye {0}",
+    "comment": [
+      "user name"
+    ]
+  },
+  "Please login to use GPTCoder": "Please login to use GPTCoder",
+  "Login": "Login",
+  "Welcome back {0}.": "Welcome back {0}."
+}

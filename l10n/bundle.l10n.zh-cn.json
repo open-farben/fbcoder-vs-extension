@@ -1,0 +1,16 @@
+{
+    "Bye": "さようなら",
+    "Hello": "你好啊",
+    "Hello {0}": "你好啊 {0}",
+    "Hello {name}": "你好啊 {name}",
+    "Login": "登陆",
+    "Please login to use GPTCoder": "请登录GPTCoder",
+    "Welcome back {0}.": "欢迎回来，{0}。",
+    "You have successfully signed out": "你已经注销成功",
+    "You have successfully signed out {0} from fbcoder./这里的{0}代表用户名": {
+        "message": "{0}已经成功从fbcoder退出。",
+        "comment": [
+          "这里的{0}代表用户名"
+        ]
+      }
+}
