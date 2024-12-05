@@ -87,7 +87,6 @@ export class IntelligentTextAreaComponent {
 
     let updateListenerExtension = EditorView.updateListener.of((update) => {
       if (update.docChanged) {
-        console.log(update);
         if (update.state.doc.toString() !== this.content()) {
           // 编辑器文档发生变化时执行的代码
           this.content.update(() => update.state.doc.toString());

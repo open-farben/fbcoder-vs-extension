@@ -48,6 +48,10 @@ export class IntelligentAnsweringComponent {
    * 正在接收内容
    */
   isReceiving = signal(false);
+  /**
+   * ws需要停止
+   */
+  wsStop = signal(false);
 
   endSignal = '<|endoftext|>';
 
@@ -94,7 +98,6 @@ export class IntelligentAnsweringComponent {
   @MessageListeners("code-test")
   codeTest(data: { code: string, lang: string }) {
     this.codeContent.set('/单元测试 请帮下面代码创建一个单元测试');
-    console.log(data.lang);
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -104,9 +107,7 @@ export class IntelligentAnsweringComponent {
   // 用户选中代码，执行代码修复
   @MessageListeners("code-explain")
   codeExplain(data: { code: string, lang: string }) {
-    console.log("代码解释")
     this.codeContent.set('/行间注释 请逐行注释以下代码：');
-    console.log(data.lang);
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -117,7 +118,6 @@ export class IntelligentAnsweringComponent {
   @MessageListeners("code-repeir")
   codeRepeir(data: { code: string, lang: string }) {
     this.codeContent.set('/代码纠正 请纠正下列代码的错误：');
-    console.log(data.lang);
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -135,7 +135,6 @@ export class IntelligentAnsweringComponent {
   }
 
   sendMessage(msg: string = '') {
-    this.isReceiving.update(() => true);
     let requestUrl = 'answerx';
     let message = '';
     const headers = {
@@ -165,7 +164,7 @@ export class IntelligentAnsweringComponent {
       postBody.lang = this.selectedCodeLang();
       postBody.prompt = postBody.prompt.replace('/行间注释', '');
     }
-    
+    if (!postBody.prompt) return;
     // 正在接收内容
     this.isReceiving.update(() => true);
     const currentIndex = this.dialogs().push({ question: postBody.prompt, answer: '正在思考...' });
@@ -177,7 +176,6 @@ export class IntelligentAnsweringComponent {
     ws.onopen = (event) => {
       ws.send(JSON.stringify(postBody));
       this.api.getNextQuestion(postBody.prompt).subscribe( (res: any) => {
-        console.log(res);
         this.recommendList = res.result;
       });
       this.codeContent.update(() => '');
@@ -192,8 +190,9 @@ export class IntelligentAnsweringComponent {
           return;
         }
       };
-      if (event.data.trim().indexOf(this.endSignal) > -1) {
+      if (event.data.trim().indexOf(this.endSignal) > -1 || this.wsStop()) {
         ws.close();
+        this.wsStop.update(() => false);
         return;
       }
       message += event.data.replace(/\|A\|/g, '\n');
@@ -212,7 +211,7 @@ export class IntelligentAnsweringComponent {
   }
 
   closeMessage() {
-
+    this.wsStop.update(() => true);
   }
 
   copyText(str: string) {

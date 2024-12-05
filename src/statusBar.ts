@@ -11,7 +11,7 @@ export class StatusBar {
         // 设置状态栏被点击时要调用的命令
         this.instatce.command = 'fbcoder.disable-enable';
         this.instatce.show();
-        this.instatce.text = ' $(mark-github) ';
+        this.instatce.text = ' $(github-alt) ';
         // 执行注册状态栏
         this.context.subscriptions.push(this.instatce);
         // 展示 loading状态 + 文字
@@ -27,9 +27,9 @@ export class StatusBar {
 
     //
     show(info: string) {
-        this.instatce.text = ` $(mark-github) ` + info;
+        this.instatce.text = ` $(github-alt) ` + info;
         if (info) {
-            setTimeout(() => this.instatce.text = ` $(mark-github) `, 2000);
+            setTimeout(() => this.instatce.text = ` $(github-alt) `, 2000);
         }
     }
 }

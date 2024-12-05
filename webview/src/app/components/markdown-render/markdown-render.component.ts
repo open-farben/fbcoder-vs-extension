@@ -42,7 +42,6 @@ export class MarkdownRenderComponent {
   converter = new Converter({ extensions: ['CodeHighlight'] });
   host = inject(ElementRef);
   constructor() {
-    console.log(this.host);
     effect(() => {
       this.host.nativeElement.innerHTML = computed(() => this.converter.makeHtml(this.content()))();
     });

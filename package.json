@@ -29,12 +29,12 @@
       {
         "command": "fbcoder.clear-dialog",
         "title": "%fbcoder.clearDialog%",
-        "icon": "$(trash)"
+        "icon": "$(clear-all)"
       },
       {
         "command": "fbcoder.open-setting",
         "title": "%fbcoder.open-setting%",
-        "icon": "$(trash)"
+        "icon": "$(gear)"
       },
       {
         "command": "fbcoder.login-out",
@@ -42,8 +42,8 @@
         "icon": "$(trash)"
       },
       {
-        "command": "fbcoder.change-passworld",
-        "title": "%fbcoder.change-passworld%",
+        "command": "fbcoder.change-password",
+        "title": "%fbcoder.change-password%",
         "icon": "$(trash)"
       },
       {
@@ -109,33 +109,26 @@
     "menus": {
       "view/title": [
         {
-          "command": "fbcoder.clear-dialog",
+          "command": "fbcoder.open-setting",
           "when": "view == fbcoder-chat",
           "group": "navigation"
         },
         {
           "command": "fbcoder.clear-dialog",
-          "when": "view == fbcoder-chat"
-        },
-        {
-          "command": "extension.sayBye",
-          "when": "view == fbcoder-chat"
+          "when": "view == fbcoder-chat && fbcode.needLogin && fbcode.isLogin",
+          "group": "navigation"
         },
         {
           "command": "fbcoder.welcome-page",
-          "when": "view == fbcoder-chat"
-        },
-        {
-          "command": "fbcoder.open-setting",
-          "when": "view == fbcoder-chat"
+          "when": "view == fbcoder-chat && fbcode.needLogin && fbcode.isLogin"
         },
         {
           "command": "fbcoder.login-out",
-          "when": "view == fbcoder-chat && fbcode.needLogin"
+          "when": "view == fbcoder-chat && fbcode.needLogin && fbcode.isLogin"
         },
         {
-          "command": "fbcoder.change-passworld",
-          "when": "view == fbcoder-chat && fbcode.needLogin"
+          "command": "fbcoder.change-password",
+          "when": "view == fbcoder-chat && fbcode.needLogin && fbcode.isLogin"
         }
       ],
       "editor/context": [

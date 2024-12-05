@@ -71,7 +71,6 @@ export class AuthService {
                 console.log(e);
                 resolve(false);
             });
-            console.log('退出登录结果', result);
             // 退出登陆成功
             if (result && result.data.code === '0') {
                 resolve(true);

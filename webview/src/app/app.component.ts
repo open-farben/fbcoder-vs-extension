@@ -76,7 +76,6 @@ export class AppComponent {
     cacheTaskList: MessageModel[],
     versionExpired: boolean
   }) {
-    console.log('接收到初始化消息');
     for (const key in this.config.config) {
       if (this.config.config.hasOwnProperty(key)) {
         Object.assign(this.config.config, { [key]: (data as { [key: string]: any })[key] });
@@ -85,7 +84,6 @@ export class AppComponent {
     // if (data.versionExpired) {
     //   this.versionExpired.update(() => true);
     // }
-    console.log(data.cacheTaskList);
     // 设置服务端信息
     if (data.cacheTaskList && data.cacheTaskList.length > 0) {
       this.msg.runQuene(data.cacheTaskList);

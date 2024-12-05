@@ -19,7 +19,6 @@ export class MessageService {
 
     constructor() {
         window.addEventListener("message", (e: MessageEvent) => {
-            console.log('接收到消息。。。');
             this.received$.next(e.data);
         });
     }
@@ -27,7 +26,6 @@ export class MessageService {
     addListener(component: any) {
         messageListeners.filter(item => item.com.constructor === component.constructor)
                         .forEach( data => {
-                            console.log('注册事件', data);
                             this.receive(data.type).subscribe( res => data.ori.apply( component, [ res ]));
                             data.ready = true;
                             const willRunItem = this.waitList.find( item => item.type === data.type )

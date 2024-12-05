@@ -81,6 +81,7 @@ export class MainAuthenticationProvider implements AuthenticationProvider  {
                 const newSession = new AuthSession(res.uuids, res.account, res.userName);
                 // 储存登录信息
                 await this._extensionContext.secrets.store(MainAuthenticationProvider.secretKey, res.uuids);
+                commands.executeCommand('setContext', 'fbcode.isLogin', true);
                 // 提示登录
                 window.showInformationMessage(l10n.t(`Hello {name}`, { name: res.userName }));
                 this._onDidChangeSessions.fire({
@@ -102,6 +103,7 @@ export class MainAuthenticationProvider implements AuthenticationProvider  {
         if (session) {
             await this._extensionContext.secrets.delete(MainAuthenticationProvider.secretKey); // 删除 token
             await this.authService.logout(session.accessToken, session.account.id);
+            commands.executeCommand('setContext', 'fbcode.isLogin', false);
             // 抛出退出事件
             this._onDidChangeSessions.fire({
                 removed: [ session ],
@@ -117,14 +119,17 @@ export class MainAuthenticationProvider implements AuthenticationProvider  {
         const accessToken = await this._extensionContext.secrets.get(MainAuthenticationProvider.secretKey);
         // 不存在返回空
         if (!accessToken) {
+            commands.executeCommand('setContext', 'fbcode.isLogin', false);
             return [];
         }
         // 存在交换完整个信息，返回完整session
         return this.authService.getUserInfo(accessToken).then( async res => {
             if (res) {
+                commands.executeCommand('setContext', 'fbcode.isLogin', true);
                 return [new AuthSession(accessToken, res?.account, res?.userName)];
             } else {
                 // 本地 token 在服务端不存在关联信息
+                commands.executeCommand('setContext', 'fbcode.isLogin', false);
                 await this._extensionContext.secrets.delete(MainAuthenticationProvider.secretKey);
                 return [];
             }
