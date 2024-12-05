@@ -87,7 +87,11 @@ export class CodeTranslateComponent {
   }
 
   insertCode() {
-    
+    this.msg.send({
+      type: "code-insert",
+      msg: '插入代码',
+      data: this.translateCode()
+    });
   }
 
   translate() {

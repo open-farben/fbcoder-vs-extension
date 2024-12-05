@@ -129,13 +129,13 @@ export class MainWebviewProvider implements WebviewViewProvider {
                     commands.executeCommand(data);
                     break;
                 // 把结果窗的内容插入到光标位置
-                case "code.insert":
+                case "code-insert":
                     const editor = window.activeTextEditor;
                     if (!editor) {break;}
                     // 奖编辑窗中选中的文字替换为结果
                     editor.edit(async (editBuilder:any) => {
                         var s = editor.selection;
-                        editBuilder.replace(s, message.result);
+                        editBuilder.replace(s, message.data);
                     });
                     break;
                 // 打开修改密码网页
