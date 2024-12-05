@@ -9,7 +9,7 @@ export default function getDocumentLangId(lang: string) {
             id = "shellscript";
             break;
         default:
-            id = lang.toLowerCase();
+            id = lang;
     }
     return id;
 }

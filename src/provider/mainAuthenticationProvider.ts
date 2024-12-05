@@ -1,4 +1,5 @@
 import {
+    authentication,
     AuthenticationProvider,
     AuthenticationProviderAuthenticationSessionsChangeEvent,
     AuthenticationSession,
@@ -42,11 +43,14 @@ export class MainAuthenticationProvider implements AuthenticationProvider  {
                 this.removeSession();
             }),
             commands.registerCommand("fbcoder.change-password", async () => {
-                const callback = new URL(`${ServeUrl}/web/operate/user/codelogin`);
+                const callback = new URL(`${ServeUrl}/web/user/codelogin`);
                 if (!this.userInfo.userId) { return; };
                 callback.searchParams.set("account", this.userInfo.userId);
                 env.openExternal(Uri.parse(callback.toString()));
             }),
+            commands.registerCommand("fbcoder.go-for-login", async () => {
+                await authentication.getSession(AuthId, [], { createIfNone: true });
+            })
         );
         // 初始化验证用户信息
         this.getSessions().then(res => {

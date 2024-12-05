@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,7 @@ import { MessageListeners, MessageModel, MessageService } from './service/messag
 import { IntelligentAnsweringComponent } from './views/intelligent-answering/intelligent-answering.component';
 import { CodeTranslateComponent } from './views/code-translate/code-translate.component';
 import { ConfigService } from './service/config-service';
+import { CodeSearchComponent } from "./views/code-search/code-search.component";
 
 @Component({
   selector: 'app-root',
@@ -19,17 +20,49 @@ import { ConfigService } from './service/config-service';
     MatIconModule,
     MatTabsModule,
     IntelligentAnsweringComponent,
-    CodeTranslateComponent
-],
+    CodeTranslateComponent,
+    CodeSearchComponent
+  ],
 })
 export class AppComponent {
 
   readonly msg = inject(MessageService);
   readonly config = inject(ConfigService);
 
-  ngOnInit(): void {
+  /**
+   * 是否需要权限
+   */
+  needLogin = signal(true);
+  /**
+   * 是否已经登陆
+   */
+  isLogin = signal(false);
+  /**
+   * 是否网络错误
+   */
+  netWorkError = signal(false);
+  /**
+   * 版本过期
+   */
+  versionExpired = signal(false);
+
+  userInfo!: { userName: string, userId: string };
+
+  constructor() {
     this.msg.addListener(this);
+  }
+
+  ngAfterViewInit() {
     this.msg.send({ type: 'webview-init-finished', msg: '通知 vscode webview已经准备就绪。' });
+  }
+
+  // 用户信息变更
+  @MessageListeners("user-change")
+  userChange(data: { userId: string, userName: string }) {
+    this.isLogin.update(() => !!data);
+    if (data) {
+      this.userInfo = data;
+    }
   }
 
   // 初始化页面
@@ -43,16 +76,19 @@ export class AppComponent {
     cacheTaskList: MessageModel[],
     versionExpired: boolean
   }) {
+    console.log('接收到初始化消息');
     for (const key in this.config.config) {
       if (this.config.config.hasOwnProperty(key)) {
-        Object.assign(this.config.config, { [key]: (data as { [key: string]: any})[key] });
+        Object.assign(this.config.config, { [key]: (data as { [key: string]: any })[key] });
       }
     }
+    // if (data.versionExpired) {
+    //   this.versionExpired.update(() => true);
+    // }
+    console.log(data.cacheTaskList);
     // 设置服务端信息
     if (data.cacheTaskList && data.cacheTaskList.length > 0) {
-      data.cacheTaskList.forEach((messageData) => {
-        this.msg.received$.next(messageData);
-      });
+      this.msg.runQuene(data.cacheTaskList);
     }
   }
 
@@ -64,7 +100,37 @@ export class AppComponent {
 
   // 版本过期
   @MessageListeners("version-expired")
-  versionExpired() {
+  versionExpir() {
     console.log('版本过期');
+    this.versionExpired.update(() => true);
+  }
+
+  // 验证网格错误
+  @MessageListeners("net-error")
+  netError() {
+    this.netWorkError.update(() => true);
+  }
+
+  goForlogin() {
+    this.msg.send({
+      type: "run-command",
+      msg: '去登陆',
+      data: "fbcoder.go-for-login"
+    });
+  }
+
+  handleDownload() {
+    this.msg.send({
+      type: "code.downLoad",
+      msg: '去下载',
+    });
+  }
+
+  refresh() {
+    this.msg.send({
+      type: 'run-command',
+      msg: '刷新界面',
+      data: "workbench.action.reloadWindow"
+    });
   }
 }

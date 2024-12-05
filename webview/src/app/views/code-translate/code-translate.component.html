@@ -12,7 +12,10 @@
             </mat-select>
         </mat-form-field>
         <button mat-button (click)="translate()" [disabled]="isRunning()">转换{{ isRunning() ? '中...' : '' }}</button>
-        <button mat-button>插入</button>
+        @if (translateCode()) {
+            <button mat-button (click)="insertCode()">插入</button>
+        }
+        
     </div>
     <div style="flex: 1; padding: 10px; overflow: auto;">
         <app-normal-editor [(content)]="translateCode" [extensions]="extensions"></app-normal-editor>

@@ -21,16 +21,6 @@ export function AddListener(context: ExtensionContext, webView: MainWebviewProvi
 		});
 	});
 
-    authentication.onDidChangeSessions(async (e) => {
-        console.log('认证信息', e);
-        // 判断是否是当前登录服务变更 
-        if (e.provider.id === MainAuthenticationProvider.id) {
-            // 获取最新登陆信息
-            const session = await authentication.getSession(MainAuthenticationProvider.id, [], { createIfNone: false });
-            webView.postMessage({ type: 'login-change', data: { userInfo: session?.account }});
-        }
-    });
-
     window.onDidChangeActiveTextEditor(() => {
         const editor = window.activeTextEditor;
         let defaultDstLang;

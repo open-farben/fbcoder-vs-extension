@@ -86,6 +86,10 @@ export class CodeTranslateComponent {
     this.isRunning.update(() => false);
   }
 
+  insertCode() {
+    
+  }
+
   translate() {
     if (!this.selectedCode() || !this.targetLang.value) {
       this.msg.send({

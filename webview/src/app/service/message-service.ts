@@ -7,22 +7,47 @@ export interface MessageModel {
     msg: string;
     data?: any;
 }
-const messageListeners: Array<{ type: string, ori: (data: any) => void, com: any }> = [];
+const messageListeners: Array<{ type: string, ori: (data: any) => void, com: any, ready?: boolean }> = [];
 @Injectable({ providedIn: 'root' })
 export class MessageService {
 
     // 接收消息
     public received$ = new Subject<MessageModel>();
 
+    // 等待执行的消息
+    waitList: MessageModel[] = [];
+
     constructor() {
-        window.addEventListener("message", (e: MessageEvent) => { 
+        window.addEventListener("message", (e: MessageEvent) => {
+            console.log('接收到消息。。。');
             this.received$.next(e.data);
         });
     }
 
     addListener(component: any) {
         messageListeners.filter(item => item.com.constructor === component.constructor)
-                        .forEach( data => this.receive(data.type).subscribe( res => data.ori.apply( component, [ res ])));
+                        .forEach( data => {
+                            console.log('注册事件', data);
+                            this.receive(data.type).subscribe( res => data.ori.apply( component, [ res ]));
+                            data.ready = true;
+                            const willRunItem = this.waitList.find( item => item.type === data.type )
+                            if (willRunItem) {
+                                this.received$.next(willRunItem);
+                                // 注册的时候发显有同类型的正在等待，去执行
+                                this.waitList = this.waitList.filter( item => item.type !== data.type);
+                            }
+                        });
+    }
+
+    runQuene(list: MessageModel[]) {
+        // 执行缓存队列，如果有事件还未注册，将对应的事件存放入等待列表中
+        list.forEach((messageData) => {
+            if (messageListeners.find( item => item.type === messageData.type)?.ready) {
+                this.received$.next(messageData);
+            } else {
+                this.waitList.push(messageData);
+            }
+        })
     }
 
     send(data: MessageModel) {

@@ -1,6 +1,6 @@
-import { CancellationToken, commands, env, ExtensionContext, l10n, Uri, Webview, WebviewView, WebviewViewProvider, WebviewViewResolveContext, window } from "vscode";
+import { authentication, CancellationToken, commands, env, ExtensionContext, l10n, Uri, Webview, WebviewView, WebviewViewProvider, WebviewViewResolveContext, window } from "vscode";
 import getUri, { readExtensionFile } from "../utils/getFiles";
-import { ApiPrefix, AuthSecretKey, DialogModelList, DialogModelSwitching, ExtensionVersion, ServeUrl } from "../config/configures";
+import { ApiPrefix, AuthId, AuthSecretKey, DialogModelList, DialogModelSwitching, ExtensionVersion, ServeUrl } from "../config/configures";
 import getDocumentLanguage from "../utils/getDocumentLanguage";
 import getDocumentLangId from "../utils/getDocumentLangId";
 import { CodeTranslateService } from "../service/codeTranslate.service";
@@ -15,6 +15,7 @@ export function activeSideBar(codeSideBar: MainWebviewProvider, type: string) {
 	}
 	const text = editor.document.getText(editor.selection);
 	const lang = getDocumentLanguage(editor);
+    console.log(lang);
 	if (text.trim() === '') {
 		window.showInformationMessage(l10n.t('Please enter some code to start'));
 		return false;
@@ -91,6 +92,16 @@ export class MainWebviewProvider implements WebviewViewProvider {
             this._extensionContext.extensionUri
         );
 
+        authentication.onDidChangeSessions(async (e) => {
+            console.log('认证信息', e);
+            // 判断是否是当前登录服务变更 
+            if (e.provider.id === AuthId) {
+                // 获取最新登陆信息
+                const session = await authentication.getSession(AuthId, [], { createIfNone: false });
+                this.postMessage({ type: "user-change", data: { userInfo: session?.account } });
+            }
+        });
+
         // 给 webview 增加 监听器
         this._setWebviewMessageListener(webviewView);
     }
@@ -130,8 +141,12 @@ export class MainWebviewProvider implements WebviewViewProvider {
                 // 打开修改密码网页
                 case "code.changePassword":
                     break;
+                // 去下载
+                case "code.downLoad":
+                    break;
                 // webview初始化完成 hook
                 case "webview-init-finished":
+                    console.log('页面加载完成');
                     const session = await this._extensionContext.secrets.get(AuthSecretKey);
                     // 将 vscode 配置传递给 webview 渲染
                     webviewView.webview.postMessage({
@@ -150,7 +165,6 @@ export class MainWebviewProvider implements WebviewViewProvider {
                     this.webviewInited = true;
                     break;
                 case "translate-code":
-                    console.log(data);
                     const { code, srcLang, dstLang } = data;
                     const translateService = new CodeTranslateService();
                     const res = await translateService.getTranslateCode(code, srcLang, dstLang);

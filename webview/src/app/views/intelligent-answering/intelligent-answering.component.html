@@ -2,76 +2,58 @@
     <!-- 对话列表 -->
     <div class="dialog-list" #dialogDom>
         @for (item of dialogs(); track $index) {
-            <div class="dialog-items">
-                <div class="header">
-                    <mat-icon>person</mat-icon>
-                    <strong style="font-size: 16px;">{{ userInfo.userName }}</strong>
-                    <span style="flex: 1"></span>
-                    <button mat-button (click)="copyText(item.question)"> 复制问题 </button>
-                </div>
-                <div class="question">
-                    <app-markdown-render [content]="item.question"></app-markdown-render>
-                </div>
-                <div class="header">
-                    <mat-icon>psychology</mat-icon>
-                    <strong style="font-size: 16px;">GPTCoder</strong>
-                    <span style="flex: 1"></span>
-                </div>
-                <div class="answer">
-                    <app-markdown-render [content]="item.answer"></app-markdown-render>
-                </div>
+        <div class="dialog-items">
+            <div class="header">
+                <mat-icon>person</mat-icon>
+                <strong style="font-size: 16px;">{{ userInfo()?.userName }}</strong>
+                <span style="flex: 1"></span>
+                <button mat-button (click)="copyText(item.question)"> 复制问题 </button>
             </div>
+            <div class="question">
+                <app-markdown-render [content]="item.question"></app-markdown-render>
+            </div>
+            <div class="header">
+                <mat-icon>psychology</mat-icon>
+                <strong style="font-size: 16px;">GPTCoder</strong>
+                <span style="flex: 1"></span>
+            </div>
+            <div class="answer">
+                <app-markdown-render [content]="item.answer"></app-markdown-render>
+            </div>
+        </div>
         } @empty {
-            <div class="empty-content">
-                @if (netWorkError()){
-                    <div class="login-text">
-                        <p align="center">后台服务连接失败，<a (click)="refresh()">请重新尝试</a></p>
-                    </div>
-                } @else {
-                    @if (needLogin()) {
-                        @if (!isLogin()) {
-                            <div class="login-text">
-                                <p>欢迎使用GPTCoder,请先登录您的账号以便更好体验您的辅助编程之旅！
-                                    <a (click)="goForlogin()">登录</a>
-                                </p>
-                                <p>当前版本插件不可用，请下载并安装其他版本 GPTCoder插件后继续使用！
-                                    <a (click)="handleDownload()">去下载</a>
-                                </p>
-                            </div>
-                        } @else {
-                            <div class='app-tips'>
-                                <p class="flex alignItem">
-                                    <mat-icon fontIcon="style" style="color: #1890ff;"></mat-icon>
-                                    <span style="width: fit-content;">支持自动代码提示和主动触发代码提示两种模式（禁用代码自动提示功能后，点击 Alt+\ 即可主动生成提示代码）。</span>
-                                </p>
-                                <p class="flex alignItem">
-                                    <mat-icon fontIcon="view_in_ar" style="color: #1890ff;"></mat-icon>
-                                    <span style="width: fit-content;">您可以尝试使用在对话框中使用 / 或 # 来唤醒更多功能。</span>
-                                </p>
-                                <p align="center" >想了解更多GPTCoder功能，请查看
-                                    <a (click)="openIntroducPage()">用户手册</a>
-                                </p>
-                            </div>
-                        }
-                    }
-                }
+        <div class="empty-content">
+            <div class='app-tips'>
+                <p class="flex alignItem">
+                    <mat-icon fontIcon="style" style="color: #1890ff;"></mat-icon>
+                    <span style="width: fit-content;">支持自动代码提示和主动触发代码提示两种模式（禁用代码自动提示功能后，点击 Alt+\ 即可主动生成提示代码）。</span>
+                </p>
+                <p class="flex alignItem">
+                    <mat-icon fontIcon="view_in_ar" style="color: #1890ff;"></mat-icon>
+                    <span style="width: fit-content;">您可以尝试使用在对话框中使用 / 或 # 来唤醒更多功能。</span>
+                </p>
+                <p align="center">想了解更多GPTCoder功能，请查看
+                    <a (click)="openIntroducPage()">用户手册</a>
+                </p>
             </div>
+        </div>
         }
     </div>
     <!-- 推荐问题 -->
     <div class="recommend-body">
         @for (recommend of recommendList; track $index) {
-            <button class="recommend" style="margin: 2px;" mat-button (click)="sendMessage(recommend)">{{ recommend }}</button>
+        <button class="recommend" style="margin: 2px;" mat-button (click)="sendMessage(recommend)">{{ recommend
+            }}</button>
         }
     </div>
     @if (isReceiving()) {
-        <div align="center" class="pt10">
-            <div class="mb10">
-              <button (click)="closeMessage()" mat-button>
+    <div align="center" class="pt10">
+        <div class="mb10">
+            <button (click)="closeMessage()" mat-button>
                 <mat-icon>stop</mat-icon>停止生成
-              </button>
-            </div>
+            </button>
         </div>
+    </div>
     }
     <app-intelligent-text-area [(content)]="codeContent"></app-intelligent-text-area>
     <!-- 复合输入框 提及功能 -->

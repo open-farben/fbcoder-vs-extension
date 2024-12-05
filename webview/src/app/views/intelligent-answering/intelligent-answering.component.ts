@@ -23,19 +23,7 @@ export class IntelligentAnsweringComponent {
   /**
    * 用户信息
    */
-  userInfo!: { userName: string, userId: string };
-  /**
-   * 是否需要权限
-   */
-  needLogin = signal(true);
-  /**
-   * 是否已经登陆
-   */
-  isLogin = signal(true);
-  /**
-   * 是否网络错误
-   */
-  netWorkError = signal(false);
+  userInfo = input<{ userName: string, userId: string }>();
   /**
    * 输入框内容
    */
@@ -104,20 +92,36 @@ export class IntelligentAnsweringComponent {
 
   // 用户选中代码，执行单元测试
   @MessageListeners("code-test")
-  inputContent(data: { code: string, language: string }) {
-    this.codeContent.set('/单元测试');
+  codeTest(data: { code: string, lang: string }) {
+    this.codeContent.set('/单元测试 请帮下面代码创建一个单元测试');
+    console.log(data.lang);
     this.selectedCode.update(() => data.code);
-    this.selectedCodeLang.update(() => data.language);
+    this.selectedCodeLang.update(() => data.lang);
+
+    this.sendMessage();
   }
 
-  // 用户选中代码，执行单元测试
-  @MessageListeners("user-change")
-  userChange(data: { userId: string, userName: string }) {
-    console.log('登陆信息', data);
-    this.isLogin.update(() => !!true);
-    if (data) {
-      this.userInfo = data;
-    }
+  // 用户选中代码，执行代码修复
+  @MessageListeners("code-explain")
+  codeExplain(data: { code: string, lang: string }) {
+    console.log("代码解释")
+    this.codeContent.set('/行间注释 请逐行注释以下代码：');
+    console.log(data.lang);
+    this.selectedCode.update(() => data.code);
+    this.selectedCodeLang.update(() => data.lang);
+
+    this.sendMessage();
+  }
+
+  // 用户选中代码，执行代码修复
+  @MessageListeners("code-repeir")
+  codeRepeir(data: { code: string, lang: string }) {
+    this.codeContent.set('/代码纠正 请纠正下列代码的错误：');
+    console.log(data.lang);
+    this.selectedCode.update(() => data.code);
+    this.selectedCodeLang.update(() => data.lang);
+
+    this.sendMessage();
   }
 
   @MessageListeners("clear-dialog")
@@ -216,28 +220,6 @@ export class IntelligentAnsweringComponent {
       type: "code.copy",
       msg: "复制文本",
       data: str
-    });
-  }
-
-  refresh() {
-    this.msg.send({
-      type: 'run-command',
-      msg: '刷新界面',
-      data: "workbench.action.reloadWindow"
-    });
-  }
-
-  goForlogin() {
-    this.msg.send({
-      type: "code.goForLogin",
-      msg: '去登陆',
-    });
-  }
-
-  handleDownload() {
-    this.msg.send({
-      type: "code.downLoad",
-      msg: '去登陆',
     });
   }
 

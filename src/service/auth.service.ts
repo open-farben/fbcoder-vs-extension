@@ -49,7 +49,7 @@ export class AuthService {
     // 打开登录页面
     openLoginPage() {
         this.uuids = v4();
-        const callback = new URL(`${ServeUrl}/web/operate/user/codelogin`);
+        const callback = new URL(`${ServeUrl}/web/user/codelogin`);
         callback.searchParams.set("sessionId", this.uuids);
         callback.searchParams.set("machineId", env.machineId);
         callback.searchParams.set("device", "vscode_" + env.appHost);

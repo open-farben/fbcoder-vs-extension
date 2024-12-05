@@ -1,14 +1,34 @@
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-    <mat-tab label="智能问答">
-        <app-intelligent-answering></app-intelligent-answering>
-    </mat-tab>
-    <mat-tab label="代码转换">
-        <app-code-translate></app-code-translate>
-    </mat-tab>
-    <!-- <mat-tab label="代码搜索">
-        <app-code-search></app-code-search>
-    </mat-tab> -->
-</mat-tab-group>
+@if (netWorkError()){
+    <div class="login-text">
+        <p align="center">后台服务连接失败，<a (click)="refresh()" mat-button>请重新尝试</a></p>
+    </div>
+} @else if (versionExpired()) {
+    <div class="login-text">
+        <p>当前版本插件不可用，请下载并安装其他版本 GPTCoder插件后继续使用！
+            <a (click)="handleDownload()" mat-button>去下载</a>
+        </p>
+    </div>
+} @else {
+    @if (needLogin() && !isLogin()) {
+        <div class="login-text">
+            <p>欢迎使用GPTCoder,请先登录您的账号以便更好体验您的辅助编程之旅！
+                <a (click)="goForlogin()" mat-button>登录</a>
+            </p>
+        </div>
+    } @else {
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+            <mat-tab label="智能问答">
+                <app-intelligent-answering></app-intelligent-answering>
+            </mat-tab>
+            <mat-tab label="代码转换">
+                <app-code-translate></app-code-translate>
+            </mat-tab>
+            <!-- <mat-tab label="代码搜索">
+                <app-code-search></app-code-search>
+            </mat-tab> -->
+        </mat-tab-group>
+    }
+}
 <footer>
     <div style="padding: 2px; width: 100%;">
         <p style="text-align: center; color: rgba(212, 212, 212, 0.6); margin: 0;">Copyright © 2024 深圳市法本信息技术股份有限公司</p>

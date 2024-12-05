@@ -40,14 +40,6 @@ export function RegisterCommand(
 			commands.executeCommand('workbench.action.openSettings', '@ext:Farben.fbcoder');
 		}),
 
-		// 注册 修改密码命令 
-		commands.registerCommand("fbcoder.change-passworld", async (userID) => {
-			const callback = new URL(`${ServeUrl}/web/operate/user/codelogin`);
-			if (!userID) { return; }
-			callback.searchParams.set("account", userID);
-			env.openExternal(Uri.parse(callback.toString()));
-		}),
-
 		// 注册新建文件指令
 		commands.registerCommand('fbcoder.create-file', async (code) => {
 			const editor = window.activeTextEditor;

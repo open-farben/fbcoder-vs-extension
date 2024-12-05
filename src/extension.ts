@@ -31,6 +31,18 @@ export async function activate(context: ExtensionContext) {
 		});
 	}
 
+	// 注册插件侧边栏
+	const mainSildeBar = new MainWebviewProvider(context, true);
+	context.subscriptions.push(window.registerWebviewViewProvider(
+		"fbcoder-chat",mainSildeBar,
+		{
+			webviewOptions: {
+				// false 时 侧边栏被隐藏时就销毁，true 时内容将会被缓存
+				retainContextWhenHidden: false
+			}
+		}
+	));
+
 	// 注册认证服务
 	let authProvider: AuthenticationProvider = new MainAuthenticationProvider(context);
 	context.subscriptions.push(authentication.registerAuthenticationProvider(MainAuthenticationProvider.id, "fbcoder", authProvider));
@@ -52,17 +64,6 @@ export async function activate(context: ExtensionContext) {
 	// 代码补全
 	const inlineCompletionProvider = new InlineCompletionProvider(messageCenter, context);
 	languages.registerInlineCompletionItemProvider({ pattern: "**" }, inlineCompletionProvider);
-	// 注册插件侧边栏
-	const mainSildeBar = new MainWebviewProvider(context, true);
-	context.subscriptions.push(window.registerWebviewViewProvider(
-		"fbcoder-chat",mainSildeBar,
-		{
-			webviewOptions: {
-				// false 时 侧边栏被隐藏时就销毁，true 时内容将会被缓存
-				retainContextWhenHidden: false
-			}
-		}
-	));
 
 	// 注册命令
 	RegisterCommand(context, outputChannel, messageCenter);
