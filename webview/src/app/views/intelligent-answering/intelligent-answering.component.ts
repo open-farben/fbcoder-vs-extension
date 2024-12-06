@@ -97,7 +97,7 @@ export class IntelligentAnsweringComponent {
   // 用户选中代码，执行单元测试
   @MessageListeners("code-test")
   codeTest(data: { code: string, lang: string }) {
-    this.codeContent.set('/单元测试 请帮下面代码创建一个单元测试');
+    this.codeContent.set('/单元测试');
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -107,7 +107,7 @@ export class IntelligentAnsweringComponent {
   // 用户选中代码，执行代码修复
   @MessageListeners("code-explain")
   codeExplain(data: { code: string, lang: string }) {
-    this.codeContent.set('/行间注释 请逐行注释以下代码：');
+    this.codeContent.set('/代码解释');
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -117,7 +117,7 @@ export class IntelligentAnsweringComponent {
   // 用户选中代码，执行代码修复
   @MessageListeners("code-repeir")
   codeRepeir(data: { code: string, lang: string }) {
-    this.codeContent.set('/代码纠正 请纠正下列代码的错误：');
+    this.codeContent.set('/代码纠正');
     this.selectedCode.update(() => data.code);
     this.selectedCodeLang.update(() => data.lang);
 
@@ -152,22 +152,24 @@ export class IntelligentAnsweringComponent {
     if (inputContent.startsWith('/代码纠正')) {
       requestUrl = 'repair';
       postBody.lang = this.selectedCodeLang();
-      postBody.prompt = postBody.prompt.replace('/代码纠正', '');
+      postBody.prompt = postBody.prompt.replace('/代码纠正', '请纠正下列代码的错误：');
     }
     if (inputContent.startsWith('/单元测试')) {
       requestUrl = 'testcase';
       postBody.lang = this.selectedCodeLang();
-      postBody.prompt = postBody.prompt.replace('/单元测试', '');
+      postBody.prompt = postBody.prompt.replace('/单元测试', '请帮下面代码创建一个单元测试');
     }
-    if (inputContent.startsWith('/行间注释')) {
-      requestUrl = 'comment';
+    if (inputContent.startsWith('/代码解释')) {
+      requestUrl = 'explainx';
       postBody.lang = this.selectedCodeLang();
-      postBody.prompt = postBody.prompt.replace('/行间注释', '');
+      postBody.prompt = postBody.prompt.replace('/代码解释', ' 请逐行解释释以下代码：');
     }
     if (!postBody.prompt) return;
     // 正在接收内容
     this.isReceiving.update(() => true);
     const currentIndex = this.dialogs().push({ question: postBody.prompt, answer: '正在思考...' });
+    this.codeContent.update(() => '');
+    this.selectedCode.update(() => '');
     // 代码相关时 添加语言字段
     const authorization = Base64.encode(JSON.stringify(headers));
     const wsurl = `${this.config.config.apiUrl.replace('http', 'ws')}${this.config.config.apiPrefix}/websocket/${requestUrl}?authorization=${authorization}`;
@@ -178,8 +180,6 @@ export class IntelligentAnsweringComponent {
       this.api.getNextQuestion(postBody.prompt).subscribe( (res: any) => {
         this.recommendList = res.result;
       });
-      this.codeContent.update(() => '');
-      this.selectedCode.update(() => '');
     };
 
     ws.onmessage = (event) => {
@@ -192,6 +192,9 @@ export class IntelligentAnsweringComponent {
       };
       if (event.data.trim().indexOf(this.endSignal) > -1 || this.wsStop()) {
         ws.close();
+        if (this.wsStop()) {
+          this.dialogs()[currentIndex - 1].answer = '用户取消...';
+        }
         this.wsStop.update(() => false);
         return;
       }
@@ -212,6 +215,7 @@ export class IntelligentAnsweringComponent {
 
   closeMessage() {
     this.wsStop.update(() => true);
+    this.isReceiving.update(() => false);
   }
 
   copyText(str: string) {

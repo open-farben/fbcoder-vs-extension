@@ -70,7 +70,6 @@ export class IntelligentTextAreaComponent {
     // 指定补全提示
     const completions = [
       { label: "/代码解释", type: "keyword", info: "为选中代码生成代码解释" },
-      { label: "/行间注释", type: "keyword", info: "为选中代码生成逐行注释" },
       { label: "/代码纠正", type: "keyword", info: "为选中代码生成纠正、优化建议" },
       { label: "/单元测试", type: "keyword", info: "为选中代码生成单元测试" },
     ];
@@ -85,22 +84,12 @@ export class IntelligentTextAreaComponent {
       };
     };
 
-    let updateListenerExtension = EditorView.updateListener.of((update) => {
-      if (update.docChanged) {
-        if (update.state.doc.toString() !== this.content()) {
-          // 编辑器文档发生变化时执行的代码
-          this.content.update(() => update.state.doc.toString());
-        }
-      }
-    });
-
     this.extensions = [
       placeholders,
       baseTheme,
       autocompletion({ override: [ myCompletions ]}),
       placeholder('请输入问题，向大模型提问'),
-      EditorView.lineWrapping,
-      updateListenerExtension,
+      EditorView.lineWrapping
     ];
   }
 }

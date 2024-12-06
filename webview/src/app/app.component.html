@@ -18,7 +18,7 @@
     } @else {
         <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
             <mat-tab label="智能问答">
-                <app-intelligent-answering></app-intelligent-answering>
+                <app-intelligent-answering [userInfo]="userInfo"></app-intelligent-answering>
             </mat-tab>
             <mat-tab label="代码转换">
                 <app-code-translate></app-code-translate>

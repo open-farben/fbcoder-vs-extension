@@ -1,6 +1,6 @@
 <div class="flex flex-direction-column h-full">
     <div style="flex: 1; padding: 10px; overflow: auto;">
-        <app-normal-editor [(content)]="selectedCode" [extensions]="extensions"></app-normal-editor>
+        <app-normal-editor [content]="selectedCode()" [extensions]="extensions"></app-normal-editor>
     </div>
     <div class="action-bar">
         <mat-form-field>
@@ -18,6 +18,6 @@
         
     </div>
     <div style="flex: 1; padding: 10px; overflow: auto;">
-        <app-normal-editor [(content)]="translateCode" [extensions]="extensions"></app-normal-editor>
+        <app-normal-editor [content]="translateCode()" [extensions]="extensions"></app-normal-editor>
     </div>
 </div>
